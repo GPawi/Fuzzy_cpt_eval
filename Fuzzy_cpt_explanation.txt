@@ -54,7 +54,7 @@ cpts_CI_all ... dataframe holding the summary of the changepoint locations at th
 cpt_samp_matrix ... matrix filled with zeros, N_reps == rows of matrix and columns are based on each 
 change point plus two more columns for beginning and ending of time series (columns == x_cpts_segs_bnds)
 ==> both beginning of time series (0), and ending (last ID) are filled in the matrix first and last column, respectively
-
+///
 seg_1_proc == seg_1
 seg_2_proc == seg_2
 ... time series slice will be divided:
@@ -64,3 +64,17 @@ seg_2_proc ... values after change point until the end of time series slice
 e.g., if n_cpts == 2:
 seg_1_proc ... values between the first change point and the second change point will be used
 seg_2_proc ... values after last change point until the end of time series slice
+
+seg_1_boot ...generates new samples for each sedment with replacement using the function "sample" from
+the mosum package
+
+cpt_samp ... estimate new changepoints by concatinating seg_1_boot and seg_2_boot using the cpt package
+summary_cpts_tmp ... change points from the bootstraping concatenated time series
+
+summary_cpts ... lists all the change points that were found within the bootstraping time series, by going
+through every change point and see if the algorithm finds a change point,
+if no change points were found, then a "NA" will be added to the list
+... this list/vector will be added to the master matrix (cpt_samp_matrix) within a row between
+beginning and end of the time series slice
+/// this will be repeated N_reps times
+
