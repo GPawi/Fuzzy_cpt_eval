@@ -1,0 +1,66 @@
+Site_df_ext == data_in_proc
+'OBS' == ts_proc_out == ty_type
+curr_minseg == min_seg_len_out == min_seg_proc [100]
+curr_AR_TS == TS_AR_ARIMA_out == TS_AR_ARIMA [1]
+curr_cptmethod == CPT_METHOD_out == CPT_METHOD_PROC ["variance"]
+curr_nreps == N_reps_out == N_reps_proc [1000]
+
+#curr_site ... only needed for shiny
+
+obs_tseries == proc_tseries == Site_df_ext$OBS_t2m
+mod_dates_plt == Site_df_ext$Dates
+
+obs_pres_logicals ... checks for not missing values = vector of TRUE
+obs_pres_logicals == obs_pres
+
+seg_no ... starts with initial segment of 1. If iterated value and its following
+value are TRUE, then seg_no gets the initial segment (1). If the following value is FALSE, 
+while the current value is TRUE, then seg_no gets the initial segment, but the initial segment 
+will be raised by +1 for the up-coming iterated value. If current value is FALSE, 
+then the seg_no value is 0.  
+
+seg_no == obs_seg_no
+obs_pres_segs ... gets the unique values/segments from seg_no
+
+cpts_CI_site_currts ...dataframe to hold the changpoints over all segs and their confidence intervals
+
+curr_seg_ids ... gets the IDs/row number from vector to slice Site_df_ext$OBS_t2m
+curr_seg_proc_ts ... slice of Site_df_ext$OBS_t2m, if length of seg_ids is 
+larger than curr_minseg of 100
+
+ts_arima ... fit of an ARIMA model to the current slice of Site_df_ext$OBS_t2m
+residuals(ts_arima) ... residual time series of ts_arima fit
+
+curr_seg_cps_ts ... output of cpt package function to get the change point 
+for current slice of Site_df_ext$OBS_t2m
+if number of change points is larger than 0, then confidence interval for change point
+will be computed (with function cpts_confint)
+
+x_series == residuals(ts_arima) 
+x_series_orig == curr_seg_proc_ts
+x_cpts == cpts(curr_seg_cpts_ts)
+N_reps == N_reps_proc** [1000]
+n_cpts == ncpts(curr_seg_cpts_ts)
+cpt_method == CPT_METHOD_PROC** ["variance"]
+AR_order == TS_AR_ARIMA** [1]
+
+x_cpts_segs_bnds ... vector starts with 0, adds the detected change points and ends with
+the length of the number of residuals for the ARIMA model
+
+x_nseg == n_cpts+1 ... number of segments that have to be processed
+
+cpts_CI_all ... dataframe holding the summary of the changepoint locations at the start and end of each segment
+
+cpt_samp_matrix ... matrix filled with zeros, N_reps == rows of matrix and columns are based on each 
+change point plus two more columns for beginning and ending of time series (columns == x_cpts_segs_bnds)
+==> both beginning of time series (0), and ending (last ID) are filled in the matrix first and last column, respectively
+
+seg_1_proc == seg_1
+seg_2_proc == seg_2
+... time series slice will be divided:
+e.g., if n_cpts == 1:
+seg_1_proc ... values betwenn the beginning 0 and first change point will be used
+seg_2_proc ... values after change point until the end of time series slice
+e.g., if n_cpts == 2:
+seg_1_proc ... values between the first change point and the second change point will be used
+seg_2_proc ... values after last change point until the end of time series slice
