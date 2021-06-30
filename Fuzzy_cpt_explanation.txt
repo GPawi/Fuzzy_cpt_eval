@@ -33,7 +33,7 @@ residuals(ts_arima) ... residual time series of ts_arima fit
 
 curr_seg_cps_ts ... output of cpt package function to get the change point 
 for current slice of Site_df_ext$OBS_t2m
-if number of change points is larger than 0, then confidence interval for change point
+curr_seg_CI_ts ... if number of change points is larger than 0, then confidence interval for change point
 will be computed (with function cpts_confint)
 
 x_series == residuals(ts_arima) 
@@ -78,3 +78,21 @@ if no change points were found, then a "NA" will be added to the list
 beginning and end of the time series slice
 /// this will be repeated N_reps times
 
+seg_sumstats_fun ... function to calculate summary stats for each segment (mean,sd,min and max)
+
+df_row == x_cpts_segs_bnds == cpt_samp_matrix
+x_tseries_orig == x_series_orig
+sumstat_proc == 'sd' == 'mean'
+
+parse(text = paste(...)) ... creates an expression that can be evaluated by the eval function
+
+seg_lwr_cols ... vector where "seg_lwr" is TRUE in the column names
+
+is_cpt_upr ... if it is 'YES' it means that it is a original change point
+cpts_CI_summary == OBS_CPT_SUMMARY in Excel sheet
+cpts_CI_site_currts == OBS_SEG_SUMMARY in Excel sheet
+
+//// Second function
+data_proc_in == Site_df_ext
+cpts_CI_site_obs == obs_cpt_summ == OBS_allsite_proc$all_cpt_summ
+cpts_CI_site_mod == mod_cpt_summ == MOD_allsite_proc$all_cpt_summ
